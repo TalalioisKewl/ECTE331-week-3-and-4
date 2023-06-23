@@ -1,0 +1,27 @@
+package Eclipses;
+
+class Partd {
+    private static int A1, A2, A3, B1, B2, B3;
+
+    public static void main(String[] args) {
+        Object lock = new Object();
+
+        Thread ThreadA = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (lock) {
+                    A1 = sum(100);
+                    lock.notify();
+                    try {
+                        lock.wait(); 
+                        A2 = B2 + sum(400);
+                        lock.notify();
+                        lock.wait(); 
+                        A3 = B3 + sum(600);
+                        lock.notify(); // Notify ThreadB to proceed
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
